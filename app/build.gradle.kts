@@ -36,6 +36,27 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:domain"))
+    implementation(project(":core:network"))
+    implementation(project(":core:database"))
+    implementation(project(":core:datastore"))
+    implementation(project(":core:ui"))
+    implementation(project(":core:util"))
+    implementation(project(":feature:auth:api"))
+    implementation(project(":feature:auth:impl"))
+    implementation(project(":feature:search:api"))
+    implementation(project(":feature:search:impl"))
+    implementation(project(":feature:repository:api"))
+    implementation(project(":feature:repository:impl"))
+    implementation(project(":feature:issues:api"))
+    implementation(project(":feature:issues:impl"))
+    implementation(project(":feature:upload:api"))
+    implementation(project(":feature:upload:impl"))
+    implementation(project(":feature:favorites:api"))
+    implementation(project(":feature:favorites:impl"))
+    implementation(project(":feature:profile:api"))
+    implementation(project(":feature:profile:impl"))
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
