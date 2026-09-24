@@ -1,7 +1,9 @@
 package com.ergin.ghclient.feature.profile.domain.model
 
+import com.ergin.ghclient.core.domain.model.UserId
+
 data class UserProfile(
-    val id: Long,
+    val id: UserId,
     val login: String,
     val avatarUrl: String,
     val name: String?,

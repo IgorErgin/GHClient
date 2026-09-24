@@ -1,11 +1,17 @@
 package com.ergin.ghclient.feature.issues.domain.model
 
+@JvmInline
+value class IssueId(val value: Long)
+
+@JvmInline
+value class IssueNumber(val value: Int)
+
 /**
  * Модель Issue репозитория.
  */
 data class Issue(
-    val id: Long,
-    val number: Int,
+    val id: IssueId,
+    val number: IssueNumber,
     val title: String,
     val body: String?,
     val state: IssueState,

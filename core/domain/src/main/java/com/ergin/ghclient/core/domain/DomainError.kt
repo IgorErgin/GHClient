@@ -9,7 +9,7 @@ sealed interface DomainError {
         TIMEOUT,
         NO_INTERNET,
         SERVER_ERROR,
-        UNAUTHORIZED, // Важно для перехвата 401 и логаута
+        UNAUTHORIZED, // Для перехвата 401 и логаута
         NOT_FOUND,
         UNKNOWN
     }

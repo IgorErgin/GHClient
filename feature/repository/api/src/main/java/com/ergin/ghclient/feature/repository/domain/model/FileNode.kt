@@ -1,5 +1,7 @@
 package com.ergin.ghclient.feature.repository.domain.model
 
+import com.ergin.ghclient.core.domain.model.Sha
+
 /**
  * Элемент дерева файлов и папок репозитория.
  */
@@ -9,7 +11,7 @@ data class FileNode(
     val type: FileType,
     val size: Long,
     val downloadUrl: String?,
-    val sha: String
+    val sha: Sha
 ) {
     enum class FileType {
         FILE, DIRECTORY, SYMLINK, SUBMODULE

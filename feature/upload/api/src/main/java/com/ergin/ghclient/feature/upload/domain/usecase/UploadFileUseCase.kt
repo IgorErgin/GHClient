@@ -2,6 +2,8 @@ package com.ergin.ghclient.feature.upload.domain.usecase
 
 import com.ergin.ghclient.core.domain.DomainError
 import com.ergin.ghclient.core.domain.Result
+import com.ergin.ghclient.core.domain.model.OwnerName
+import com.ergin.ghclient.core.domain.model.RepoName
 import com.ergin.ghclient.feature.upload.domain.repository.UploadRepository
 import javax.inject.Inject
 
@@ -9,8 +11,8 @@ class UploadFileUseCase @Inject constructor(
     private val uploadRepository: UploadRepository
 ) {
     suspend operator fun invoke(
-        owner: String,
-        repo: String,
+        owner: OwnerName,
+        repo: RepoName,
         path: String,
         base64Content: String,
         message: String,
