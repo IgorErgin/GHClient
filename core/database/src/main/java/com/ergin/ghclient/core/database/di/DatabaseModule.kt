@@ -28,7 +28,7 @@ object DatabaseModule {
             GHClientDatabase::class.java,
             "ghclient.db"
         )
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(false)
             .build()
     }
 
