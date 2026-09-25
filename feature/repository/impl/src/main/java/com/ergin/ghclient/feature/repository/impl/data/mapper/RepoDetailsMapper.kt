@@ -11,7 +11,9 @@ import com.ergin.ghclient.feature.repository.domain.model.RepoDetails
 import com.ergin.ghclient.feature.repository.impl.data.remote.model.CommitDto
 import com.ergin.ghclient.feature.repository.impl.data.remote.model.FileNodeDto
 import com.ergin.ghclient.feature.repository.impl.data.remote.model.PullRequestDto
+import com.ergin.ghclient.feature.repository.impl.data.remote.model.ReadmeDto
 import com.ergin.ghclient.feature.repository.impl.data.remote.model.RepoDetailsDto
+import java.util.Base64
 
 fun RepoDetailsDto.toDomain(): RepoDetails {
     return RepoDetails(
@@ -26,6 +28,17 @@ fun RepoDetailsDto.toDomain(): RepoDetails {
         ownerAvatarUrl = owner.avatarUrl,
         defaultBranch = defaultBranch
     )
+}
+
+fun ReadmeDto.toDomain(): String {
+    val rawContent = content ?: return ""
+    val cleanContent = rawContent.replace("\n", "").replace("\r", "")
+    return try {
+        val decodedBytes = Base64.getDecoder().decode(cleanContent)
+        String(decodedBytes, Charsets.UTF_8)
+    } catch (e: Exception) {
+        rawContent
+    }
 }
 
 fun FileNodeDto.toDomain(): FileNode {

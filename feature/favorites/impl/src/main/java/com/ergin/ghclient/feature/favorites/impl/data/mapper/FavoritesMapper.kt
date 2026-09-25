@@ -17,7 +17,7 @@ fun RepoEntity.toDomain(): Repo {
     )
 }
 
-fun Repo.toEntity(): RepoEntity {
+fun Repo.toEntity(isFavorite: Boolean = true): RepoEntity {
     return RepoEntity(
         id = id.value,
         name = name,
@@ -26,6 +26,6 @@ fun Repo.toEntity(): RepoEntity {
         description = description,
         language = language,
         stars = stars,
-        isFavorite = true
+        isFavorite = isFavorite
     )
 }

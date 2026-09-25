@@ -1,6 +1,5 @@
 package com.ergin.ghclient.feature.repository.impl.data.repository
 
-import android.util.Base64
 import com.ergin.ghclient.core.domain.DomainError
 import com.ergin.ghclient.core.domain.Result
 import com.ergin.ghclient.core.domain.model.OwnerName
@@ -40,20 +39,7 @@ class RepoDetailsRepositoryImpl @Inject constructor(
             repositoryApi.getRepoReadme(owner.value, repo.value)
         }
         return when (result) {
-            is Result.Success -> {
-                val content = result.data.content
-                val decoded = if (!content.isNullOrEmpty()) {
-                    val cleanContent = content.replace("\n", "").replace("\r", "")
-                    try {
-                        String(Base64.decode(cleanContent, Base64.DEFAULT), Charsets.UTF_8)
-                    } catch (e: Exception) {
-                        content
-                    }
-                } else {
-                    ""
-                }
-                Result.Success(decoded)
-            }
+            is Result.Success -> Result.Success(result.data.toDomain())
             is Result.Error -> Result.Error(result.error)
         }
     }

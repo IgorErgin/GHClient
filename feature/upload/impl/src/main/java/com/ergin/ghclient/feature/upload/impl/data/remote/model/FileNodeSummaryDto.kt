@@ -8,5 +8,5 @@ data class FileNodeSummaryDto(
     @SerialName("name") val name: String,
     @SerialName("path") val path: String,
     @SerialName("sha") val sha: String,
-    @SerialName("size") val size: Long
+    @SerialName("size") val size: Long = 0L
 )

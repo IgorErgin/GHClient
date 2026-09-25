@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserDto(
     @SerialName("login") val login: String,
-    @SerialName("avatar_url") val avatarUrl: String
+    @SerialName("avatar_url") val avatarUrl: String = ""
 )
