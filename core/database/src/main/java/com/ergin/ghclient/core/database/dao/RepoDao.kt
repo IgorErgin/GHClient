@@ -13,6 +13,9 @@ interface RepoDao {
     @Query("SELECT * FROM repos")
     fun getAllCachedRepos(): Flow<List<RepoEntity>>
 
+    @Query("SELECT * FROM repos")
+    suspend fun getCachedReposList(): List<RepoEntity>
+
     @Query("SELECT * FROM repos WHERE isFavorite = 1")
     fun getFavoriteRepos(): Flow<List<RepoEntity>>
 
