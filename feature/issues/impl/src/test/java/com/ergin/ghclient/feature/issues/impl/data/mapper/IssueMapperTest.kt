@@ -1,5 +1,6 @@
 package com.ergin.ghclient.feature.issues.impl.data.mapper
 
+import com.ergin.ghclient.core.database.entity.IssueEntity
 import com.ergin.ghclient.feature.issues.domain.model.Issue
 import com.ergin.ghclient.feature.issues.domain.model.IssueId
 import com.ergin.ghclient.feature.issues.domain.model.IssueNumber
@@ -37,6 +38,32 @@ class IssueMapperTest {
         assertEquals("https://avatars.githubusercontent.com/u/101", domain.authorAvatarUrl)
         assertEquals("2026-03-30T14:00:00Z", domain.createdAt)
         assertEquals(3, domain.commentsCount)
+    }
+
+    @Test
+    fun `IssueEntity toDomain and Issue toEntity map bidirectionally`() {
+        val entity = IssueEntity(
+            id = 101L,
+            repoOwner = "owner",
+            repoName = "repo",
+            number = 1,
+            title = "Bug title",
+            body = "Bug body",
+            state = "OPEN",
+            authorName = "reporter",
+            authorAvatarUrl = "https://avatars.githubusercontent.com/u/101",
+            createdAt = "2026-03-30T14:00:00Z",
+            commentsCount = 3
+        )
+
+        val domain = entity.toDomain()
+
+        assertEquals(IssueId(101L), domain.id)
+        assertEquals(IssueNumber(1), domain.number)
+        assertEquals(Issue.IssueState.OPEN, domain.state)
+
+        val mappedEntity = domain.toEntity("owner", "repo")
+        assertEquals(entity, mappedEntity)
     }
 
     @Test

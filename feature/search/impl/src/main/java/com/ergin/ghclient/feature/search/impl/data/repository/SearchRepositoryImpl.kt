@@ -36,7 +36,15 @@ class SearchRepositoryImpl @Inject constructor(
                 repoDao.insertRepos(entities)
                 Result.Success(dtoList.map { it.toDomain() })
             }
-            is Result.Error -> Result.Error(result.error)
+            is Result.Error -> {
+                if (result.error == DomainError.Network.NO_INTERNET) {
+                    val cachedEntities = repoDao.getCachedReposList()
+                    if (cachedEntities.isNotEmpty()) {
+                        return Result.Success(cachedEntities.map { it.toDomain() })
+                    }
+                }
+                Result.Error(result.error)
+            }
         }
     }
 

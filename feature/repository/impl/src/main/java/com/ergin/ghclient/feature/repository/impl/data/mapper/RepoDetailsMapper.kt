@@ -1,5 +1,6 @@
 package com.ergin.ghclient.feature.repository.impl.data.mapper
 
+import com.ergin.ghclient.core.database.entity.RepoDetailsEntity
 import com.ergin.ghclient.core.domain.model.OwnerName
 import com.ergin.ghclient.core.domain.model.RepoId
 import com.ergin.ghclient.core.domain.model.Sha
@@ -27,6 +28,37 @@ fun RepoDetailsDto.toDomain(): RepoDetails {
         ownerName = OwnerName(owner.login),
         ownerAvatarUrl = owner.avatarUrl,
         defaultBranch = defaultBranch
+    )
+}
+
+fun RepoDetailsEntity.toDomain(): RepoDetails {
+    return RepoDetails(
+        id = RepoId(repoId),
+        name = name,
+        description = description,
+        language = language,
+        stars = stars,
+        forks = forks,
+        openIssuesCount = openIssuesCount,
+        ownerName = OwnerName(ownerName),
+        ownerAvatarUrl = ownerAvatarUrl,
+        defaultBranch = defaultBranch
+    )
+}
+
+fun RepoDetails.toEntity(readmeContent: String? = null): RepoDetailsEntity {
+    return RepoDetailsEntity(
+        repoId = id.value,
+        name = name,
+        ownerName = ownerName.value,
+        ownerAvatarUrl = ownerAvatarUrl,
+        description = description,
+        language = language,
+        stars = stars,
+        forks = forks,
+        openIssuesCount = openIssuesCount,
+        defaultBranch = defaultBranch,
+        readmeContent = readmeContent
     )
 }
 

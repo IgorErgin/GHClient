@@ -57,6 +57,7 @@ class SearchRepositoryImplLiveTest {
 
     private val fakeRepoDao = object : RepoDao {
         override fun getAllCachedRepos(): Flow<List<RepoEntity>> = flowOf(emptyList())
+        override suspend fun getCachedReposList(): List<RepoEntity> = emptyList()
         override fun getFavoriteRepos(): Flow<List<RepoEntity>> = flowOf(emptyList())
         override suspend fun insertRepos(repos: List<RepoEntity>) {}
         override suspend fun updateFavorite(repoId: Long, isFavorite: Boolean) {}

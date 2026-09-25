@@ -1,5 +1,6 @@
 package com.ergin.ghclient.feature.repository.impl.data.mapper
 
+import com.ergin.ghclient.core.database.entity.RepoDetailsEntity
 import com.ergin.ghclient.core.domain.model.OwnerName
 import com.ergin.ghclient.core.domain.model.RepoId
 import com.ergin.ghclient.core.domain.model.Sha
@@ -52,6 +53,32 @@ class RepoDetailsMapperTest {
         assertEquals("main", domain.defaultBranch)
         assertEquals(OwnerName("ergin"), domain.ownerName)
         assertEquals("https://avatars.githubusercontent.com/u/1001", domain.ownerAvatarUrl)
+    }
+
+    @Test
+    fun `RepoDetailsEntity toDomain and RepoDetails toEntity map bidirectionally`() {
+        val entity = RepoDetailsEntity(
+            repoId = 1001L,
+            name = "GHClient",
+            ownerName = "ergin",
+            ownerAvatarUrl = "https://avatars.githubusercontent.com/u/1001",
+            description = "Detailed description",
+            language = "Kotlin",
+            stars = 50,
+            forks = 10,
+            openIssuesCount = 5,
+            defaultBranch = "main",
+            readmeContent = "# Readme"
+        )
+
+        val domain = entity.toDomain()
+
+        assertEquals(RepoId(1001L), domain.id)
+        assertEquals("GHClient", domain.name)
+        assertEquals(OwnerName("ergin"), domain.ownerName)
+
+        val mappedEntity = domain.toEntity(readmeContent = "# Readme")
+        assertEquals(entity, mappedEntity)
     }
 
     @Test

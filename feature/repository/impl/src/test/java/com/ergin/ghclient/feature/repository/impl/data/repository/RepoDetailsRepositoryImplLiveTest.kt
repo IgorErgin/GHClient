@@ -1,5 +1,7 @@
 package com.ergin.ghclient.feature.repository.impl.data.repository
 
+import com.ergin.ghclient.core.database.dao.RepoDetailsDao
+import com.ergin.ghclient.core.database.entity.RepoDetailsEntity
 import com.ergin.ghclient.core.datastore.TokenStorage
 import com.ergin.ghclient.core.domain.Result
 import com.ergin.ghclient.core.domain.model.AccessToken
@@ -55,7 +57,14 @@ class RepoDetailsRepositoryImplLiveTest {
         .build()
 
     private val repositoryApi = retrofit.create(RepositoryApi::class.java)
-    private val repository = RepoDetailsRepositoryImpl(repositoryApi)
+
+    private val fakeRepoDetailsDao = object : RepoDetailsDao {
+        override suspend fun insertRepoDetails(details: RepoDetailsEntity) {}
+        override suspend fun getRepoDetails(ownerName: String, repoName: String): RepoDetailsEntity? = null
+        override suspend fun updateReadme(ownerName: String, repoName: String, readme: String) {}
+    }
+
+    private val repository = RepoDetailsRepositoryImpl(repositoryApi, fakeRepoDetailsDao)
 
     @Test
     fun testLiveRepoDetailsMappingWithProductionInterceptors() = runBlocking {

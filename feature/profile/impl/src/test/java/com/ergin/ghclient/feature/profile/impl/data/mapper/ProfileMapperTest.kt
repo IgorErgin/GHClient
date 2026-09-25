@@ -1,5 +1,6 @@
 package com.ergin.ghclient.feature.profile.impl.data.mapper
 
+import com.ergin.ghclient.core.database.entity.UserProfileEntity
 import com.ergin.ghclient.core.domain.model.UserId
 import com.ergin.ghclient.feature.profile.domain.model.UserActivity
 import com.ergin.ghclient.feature.profile.domain.model.UserProfile
@@ -37,6 +38,28 @@ class ProfileMapperTest {
         assertEquals(25, domain.publicRepos)
         assertEquals(100, domain.followers)
         assertEquals(50, domain.following)
+    }
+
+    @Test
+    fun `UserProfileEntity toDomain and UserProfile toEntity map bidirectionally`() {
+        val entity = UserProfileEntity(
+            id = 777L,
+            login = "johndoe",
+            avatarUrl = "https://avatars.githubusercontent.com/u/777",
+            name = "John Doe",
+            bio = "Android Developer",
+            publicRepos = 25,
+            followers = 100,
+            following = 50
+        )
+
+        val domain = entity.toDomain()
+
+        assertEquals(UserId(777L), domain.id)
+        assertEquals("johndoe", domain.login)
+
+        val mappedEntity = domain.toEntity()
+        assertEquals(entity, mappedEntity)
     }
 
     @Test

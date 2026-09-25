@@ -1,5 +1,6 @@
 package com.ergin.ghclient.feature.repository.impl.data.repository
 
+import com.ergin.ghclient.core.database.dao.RepoDetailsDao
 import com.ergin.ghclient.core.domain.DomainError
 import com.ergin.ghclient.core.domain.Result
 import com.ergin.ghclient.core.domain.model.OwnerName
@@ -11,11 +12,13 @@ import com.ergin.ghclient.feature.repository.domain.model.PullRequest
 import com.ergin.ghclient.feature.repository.domain.model.RepoDetails
 import com.ergin.ghclient.feature.repository.domain.repository.RepoDetailsRepository
 import com.ergin.ghclient.feature.repository.impl.data.mapper.toDomain
+import com.ergin.ghclient.feature.repository.impl.data.mapper.toEntity
 import com.ergin.ghclient.feature.repository.impl.data.remote.RepositoryApi
 import javax.inject.Inject
 
 class RepoDetailsRepositoryImpl @Inject constructor(
-    private val repositoryApi: RepositoryApi
+    private val repositoryApi: RepositoryApi,
+    private val repoDetailsDao: RepoDetailsDao
 ) : RepoDetailsRepository {
 
     override suspend fun getRepoDetails(
@@ -26,8 +29,23 @@ class RepoDetailsRepositoryImpl @Inject constructor(
             repositoryApi.getRepoDetails(owner.value, repo.value)
         }
         return when (result) {
-            is Result.Success -> Result.Success(result.data.toDomain())
-            is Result.Error -> Result.Error(result.error)
+            is Result.Success -> {
+                val details = result.data.toDomain()
+                val existingEntity = repoDetailsDao.getRepoDetails(owner.value, repo.value)
+                repoDetailsDao.insertRepoDetails(
+                    details.toEntity(readmeContent = existingEntity?.readmeContent)
+                )
+                Result.Success(details)
+            }
+            is Result.Error -> {
+                if (result.error == DomainError.Network.NO_INTERNET) {
+                    val cachedEntity = repoDetailsDao.getRepoDetails(owner.value, repo.value)
+                    if (cachedEntity != null) {
+                        return Result.Success(cachedEntity.toDomain())
+                    }
+                }
+                Result.Error(result.error)
+            }
         }
     }
 
@@ -39,8 +57,21 @@ class RepoDetailsRepositoryImpl @Inject constructor(
             repositoryApi.getRepoReadme(owner.value, repo.value)
         }
         return when (result) {
-            is Result.Success -> Result.Success(result.data.toDomain())
-            is Result.Error -> Result.Error(result.error)
+            is Result.Success -> {
+                val readme = result.data.toDomain()
+                repoDetailsDao.updateReadme(owner.value, repo.value, readme)
+                Result.Success(readme)
+            }
+            is Result.Error -> {
+                if (result.error == DomainError.Network.NO_INTERNET) {
+                    val cachedEntity = repoDetailsDao.getRepoDetails(owner.value, repo.value)
+                    val cachedReadme = cachedEntity?.readmeContent
+                    if (cachedReadme != null) {
+                        return Result.Success(cachedReadme)
+                    }
+                }
+                Result.Error(result.error)
+            }
         }
     }
 
