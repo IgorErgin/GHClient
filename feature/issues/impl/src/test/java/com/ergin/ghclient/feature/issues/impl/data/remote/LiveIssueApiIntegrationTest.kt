@@ -1,4 +1,4 @@
-package com.ergin.ghclient.feature.search.impl.data.remote
+package com.ergin.ghclient.feature.issues.impl.data.remote
 
 import com.ergin.ghclient.core.datastore.TokenStorage
 import com.ergin.ghclient.core.domain.model.AccessToken
@@ -12,15 +12,14 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 /**
- * Интеграционный тест с использованием продуктовых HeaderInterceptor и AuthInterceptor
+ * Интеграционный тест с HeaderInterceptor и AuthInterceptor для IssueApi
  */
-class LiveGitHubApiIntegrationTest {
+class LiveIssueApiIntegrationTest {
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -48,26 +47,14 @@ class LiveGitHubApiIntegrationTest {
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
 
-    private val searchApi = retrofit.create(SearchApi::class.java)
+    private val issueApi = retrofit.create(IssueApi::class.java)
 
     @Test
-    fun testRealNetworkRequestToGitHubApi() = runBlocking {
-        println("📡 [PRODUCTION INTERCEPTORS] Запрос на https://api.github.com/search/repositories?q=kotlin...")
+    fun testLiveGetIssues() = runBlocking {
+        println("📡 [PRODUCTION INTERCEPTORS] Запрос публичных задач (Issues) для octocat/Hello-World...")
+        val issues = issueApi.getIssues("octocat", "Hello-World")
 
-        val response = searchApi.searchRepositories(query = "kotlin", page = 1, perPage = 5)
-
-        assertNotNull("Ответ сервера не должен быть null", response)
-        assertTrue("Общее количество найденных репозиториев должно быть > 0", response.totalCount > 0)
-        assertTrue("Список элементов не должен быть пустым", response.items.isNotEmpty())
-
-        val firstRepo = response.items.first()
-        assertNotNull("Имя репозитория должно быть заполнено", firstRepo.name)
-        assertNotNull("Логин владельца должен быть заполнен", firstRepo.owner.login)
-
-        println("✅ УСПЕХ с HeaderInterceptor и AuthInterceptor:")
-        println("   - Название репозитория: ${firstRepo.name}")
-        println("   - Владелец: ${firstRepo.owner.login}")
-        println("   - Звезд: ${firstRepo.stargazersCount}")
-        println("   - Язык: ${firstRepo.language}")
+        assertNotNull(issues)
+        println("✅ УСПЕХ с HeaderInterceptor: Загружен список задач (размер: ${issues.size})")
     }
 }

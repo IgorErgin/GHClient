@@ -1,4 +1,4 @@
-package com.ergin.ghclient.feature.search.impl.data.remote
+package com.ergin.ghclient.feature.profile.impl.data.remote
 
 import com.ergin.ghclient.core.datastore.TokenStorage
 import com.ergin.ghclient.core.domain.model.AccessToken
@@ -11,16 +11,17 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 /**
- * Интеграционный тест с использованием продуктовых HeaderInterceptor и AuthInterceptor
+ * Интеграционный тест с HeaderInterceptor и AuthInterceptor для ProfileApi
  */
-class LiveGitHubApiIntegrationTest {
+class LiveProfileApiIntegrationTest {
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -48,26 +49,26 @@ class LiveGitHubApiIntegrationTest {
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
 
-    private val searchApi = retrofit.create(SearchApi::class.java)
+    private val profileApi = retrofit.create(ProfileApi::class.java)
 
     @Test
-    fun testRealNetworkRequestToGitHubApi() = runBlocking {
-        println("📡 [PRODUCTION INTERCEPTORS] Запрос на https://api.github.com/search/repositories?q=kotlin...")
+    fun testLiveGetUserActivity() = runBlocking {
+        println("📡 [PRODUCTION INTERCEPTORS] Запрос публичных событий пользователя 'octocat'...")
+        val events = profileApi.getUserActivity("octocat")
 
-        val response = searchApi.searchRepositories(query = "kotlin", page = 1, perPage = 5)
+        assertNotNull(events)
+        println("✅ УСПЕХ с HeaderInterceptor: Загружено ${events.size} событий пользователя 'octocat'")
+    }
 
-        assertNotNull("Ответ сервера не должен быть null", response)
-        assertTrue("Общее количество найденных репозиториев должно быть > 0", response.totalCount > 0)
-        assertTrue("Список элементов не должен быть пустым", response.items.isNotEmpty())
-
-        val firstRepo = response.items.first()
-        assertNotNull("Имя репозитория должно быть заполнено", firstRepo.name)
-        assertNotNull("Логин владельца должен быть заполнен", firstRepo.owner.login)
-
-        println("✅ УСПЕХ с HeaderInterceptor и AuthInterceptor:")
-        println("   - Название репозитория: ${firstRepo.name}")
-        println("   - Владелец: ${firstRepo.owner.login}")
-        println("   - Звезд: ${firstRepo.stargazersCount}")
-        println("   - Язык: ${firstRepo.language}")
+    @Test
+    fun testLiveGetAuthenticatedUserWithoutTokenReturns401() = runBlocking {
+        println("📡 [PRODUCTION INTERCEPTORS] Запрос /user без токена (ожидаем 401 Unauthorized)...")
+        try {
+            profileApi.getAuthenticatedUser()
+            assert(false) { "Запрос без токена не должен пройти с успехом" }
+        } catch (e: HttpException) {
+            assertEquals(401, e.code())
+            println("✅ УСПЕХ с HeaderInterceptor и AuthInterceptor: Сервер вернул HTTP 401 Unauthorized!")
+        }
     }
 }
