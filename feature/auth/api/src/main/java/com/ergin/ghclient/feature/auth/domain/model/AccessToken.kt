@@ -1,4 +1,5 @@
 package com.ergin.ghclient.feature.auth.domain.model
 
-@JvmInline
-value class AccessToken(val value: String)
+import com.ergin.ghclient.core.domain.model.AccessToken
+
+typealias AccessToken = AccessToken
