@@ -29,8 +29,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.ergin.ghclient.core.domain.model.OwnerName
 import com.ergin.ghclient.core.domain.model.RepoId
@@ -178,13 +180,31 @@ fun PunchcardRepoCard(
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                         .padding(horizontal = 6.dp, vertical = 4.dp)
                 ) {
-                    AsyncImage(
-                        model = repo.ownerAvatarUrl,
-                        contentDescription = repo.ownerName.value,
-                        modifier = Modifier
-                            .size(16.dp)
-                            .clip(CircleShape)
-                    )
+                    val isPreview = LocalInspectionMode.current
+                    if (isPreview || repo.ownerAvatarUrl.isBlank()) {
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = repo.ownerName.value.take(1).uppercase(),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                fontSize = 9.sp
+                            )
+                        }
+                    } else {
+                        AsyncImage(
+                            model = repo.ownerAvatarUrl,
+                            contentDescription = repo.ownerName.value,
+                            modifier = Modifier
+                                .size(16.dp)
+                                .clip(CircleShape)
+                        )
+                    }
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
                         imageVector = Icons.Default.Star,

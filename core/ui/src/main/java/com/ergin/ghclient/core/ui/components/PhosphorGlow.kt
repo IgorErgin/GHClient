@@ -16,18 +16,22 @@ fun Modifier.phosphorGlow(
     glowColor: Color = Color(0xFF4EFD91),
     blurRadius: Float = 30f
 ): Modifier = this.drawWithContent {
-    drawIntoCanvas { canvas ->
-        val paint = Paint().asFrameworkPaint().apply {
-            color = glowColor.hashCode()
-            isAntiAlias = true
-            maskFilter = BlurMaskFilter(
-                blurRadius,
-                BlurMaskFilter.Blur.NORMAL
-            )
+    try {
+        drawIntoCanvas { canvas ->
+            val paint = Paint().asFrameworkPaint().apply {
+                color = glowColor.hashCode()
+                isAntiAlias = true
+                maskFilter = BlurMaskFilter(
+                    blurRadius,
+                    BlurMaskFilter.Blur.NORMAL
+                )
+            }
+            canvas.nativeCanvas.save()
+            drawContent()
+            canvas.nativeCanvas.restore()
         }
-        canvas.nativeCanvas.save()
-        drawContent()
-        canvas.nativeCanvas.restore()
+    } catch (_: Throwable) {
+        // Режим превью или устройство без поддержки BlurMaskFilter
     }
     drawContent()
 }
