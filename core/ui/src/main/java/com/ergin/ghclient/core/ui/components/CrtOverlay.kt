@@ -109,10 +109,10 @@ fun CrtScreenOverlay(
     enableScanlines: Boolean = true,
     enableVignette: Boolean = true,
     enableChromaticAberration: Boolean = true,
-    distortionIntensity: Float = 0.08f,
+    distortionIntensity: Float = 0.03f,
     chromaticAberrationIntensity: Float = 0.06f,
     scanlineOpacity: Float = 0.18f,
-    vignetteOpacity: Float = 0.85f,
+    vignetteOpacity: Float = 0.92f,
     content: @Composable () -> Unit
 ) {
     val isPreview = LocalInspectionMode.current
