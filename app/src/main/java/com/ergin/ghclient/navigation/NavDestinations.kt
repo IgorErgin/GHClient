@@ -16,3 +16,9 @@ data class RepoDetailsDestination(
     val owner: String,
     val repoName: String
 )
+
+@Serializable
+data object FavoritesDestination
+
+@Serializable
+data object ProfileDestination

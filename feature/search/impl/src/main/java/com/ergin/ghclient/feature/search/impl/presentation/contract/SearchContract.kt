@@ -6,7 +6,7 @@ import com.ergin.ghclient.core.ui.mvi.UiState
 import com.ergin.ghclient.feature.search.domain.model.Repo
 
 data class SearchState(
-    val query: String = "FIND_REPO --FILTER=ALL",
+    val query: String = "",
     val repos: List<Repo> = emptyList(),
     val selectedLanguage: String? = null,
     val availableLanguages: List<String> = listOf("ВСЕ", "KOTLIN", "RUST", "TYPESCRIPT", "C/ASM"),

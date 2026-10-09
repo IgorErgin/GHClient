@@ -28,8 +28,7 @@ fun BranchTelemetryBar(
     selectedBranch: String,
     onBranchClick: () -> Unit,
     modifier: Modifier = Modifier,
-    commitHash: String = "c8f12a0",
-    stackPercentage: String = "KT 98.4%"
+    language: String? = "KOTLIN"
 ) {
     Row(
         modifier = modifier
@@ -67,42 +66,20 @@ fun BranchTelemetryBar(
             )
         }
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        if (!language.isNullOrBlank()) {
             Box(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.6f))
-                    .padding(horizontal = 6.dp, vertical = 4.dp)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "ХЭШ: ",
+                        text = "ЯЗЫК: ",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.outline
                     )
                     Text(
-                        text = commitHash,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.6f))
-                    .padding(horizontal = 6.dp, vertical = 4.dp)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "СТЕК: ",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                    Text(
-                        text = stackPercentage,
+                        text = language.uppercase(),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary
                     )

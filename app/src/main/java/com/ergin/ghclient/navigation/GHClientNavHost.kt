@@ -9,6 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.ergin.ghclient.feature.auth.impl.presentation.ui.AuthRoute
+import com.ergin.ghclient.feature.favorites.impl.presentation.ui.FavoritesRoute
+import com.ergin.ghclient.feature.profile.impl.presentation.ui.ProfileRoute
 import com.ergin.ghclient.feature.repository.impl.presentation.ui.RepoDetailsRoute
 import com.ergin.ghclient.feature.search.impl.presentation.ui.SearchRoute
 
@@ -51,6 +53,14 @@ fun GHClientNavHost(
             )
         }
 
+        composable<FavoritesDestination> {
+            FavoritesRoute(
+                onNavigateToDetails = { owner, repoName ->
+                    navController.navigate(RepoDetailsDestination(owner = owner, repoName = repoName))
+                }
+            )
+        }
+
         composable<RepoDetailsDestination> {
             RepoDetailsRoute(
                 onNavigateBack = {
@@ -62,6 +72,16 @@ fun GHClientNavHost(
                         "Формирование рапорта: $owner/$repoName",
                         Toast.LENGTH_SHORT
                     ).show()
+                }
+            )
+        }
+
+        composable<ProfileDestination> {
+            ProfileRoute(
+                onNavigateToAuth = {
+                    navController.navigate(AuthDestination) {
+                        popUpTo<SearchDestination> { inclusive = true }
+                    }
                 }
             )
         }

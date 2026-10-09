@@ -114,7 +114,7 @@ fun RepoDetailsScreen(
                 BranchTelemetryBar(
                     selectedBranch = uiState.selectedBranch,
                     onBranchClick = { onEvent(RepoDetailsEvent.BranchSelected("master*")) },
-                    stackPercentage = uiState.details?.language?.uppercase()?.let { "$it 100%" } ?: "MULTI 100%"
+                    language = uiState.details?.language
                 )
 
                 when {
@@ -161,10 +161,9 @@ fun RepoDetailsScreen(
                                 when (uiState.selectedTab) {
                                     RepoTab.README -> {
                                         RepoContentCassetteBlock(
-                                            moduleTitle = "# ${details?.name ?: uiState.repoName} // ЭВМ-86",
+                                            moduleTitle = "# ${details?.name ?: uiState.repoName}",
                                             descriptionText = desc,
-                                            readmeText = uiState.readmeContent,
-                                            onCopyCodeClick = {}
+                                            readmeText = uiState.readmeContent
                                         )
                                     }
                                     RepoTab.TREE -> {

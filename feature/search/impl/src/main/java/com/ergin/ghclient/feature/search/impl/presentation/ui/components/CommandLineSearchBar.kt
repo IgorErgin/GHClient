@@ -2,6 +2,7 @@ package com.ergin.ghclient.feature.search.impl.presentation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,24 +44,14 @@ fun CommandLineSearchBar(
         shape = CutCornerShape(0.dp)
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(10.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "⌨ КОМАНДНАЯ СТРОКА ПОИСКА",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = "РЕГИСТР: UTF-8",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            Text(
+                text = "⌨ ПОИСК РЕПОЗИТОРИЕВ",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary
+            )
 
             Row(
                 modifier = Modifier
@@ -76,18 +67,28 @@ fun CommandLineSearchBar(
                     fontWeight = FontWeight.Bold
                 )
 
-                BasicTextField(
-                    value = query,
-                    onValueChange = onQueryChanged,
-                    modifier = Modifier.weight(1f),
-                    textStyle = MaterialTheme.typography.bodyMedium.copy(
-                        color = MaterialTheme.colorScheme.primary
-                    ),
-                    cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(onSearch = { onSearchClicked() })
-                )
+                Box(modifier = Modifier.weight(1f)) {
+                    if (query.isEmpty()) {
+                        Text(
+                            text = "ВВЕДИТЕ НАЗВАНИЕ...",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
+
+                    BasicTextField(
+                        value = query,
+                        onValueChange = onQueryChanged,
+                        modifier = Modifier.fillMaxWidth(),
+                        textStyle = MaterialTheme.typography.bodyMedium.copy(
+                            color = MaterialTheme.colorScheme.primary
+                        ),
+                        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(onSearch = { onSearchClicked() })
+                    )
+                }
 
                 if (query.isNotEmpty()) {
                     IconButton(
@@ -102,22 +103,6 @@ fun CommandLineSearchBar(
                         )
                     }
                 }
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "ЧУВСТВИТЕЛЬНОСТЬ: 94%",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "МАСКА: *.git / *.pzu",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.secondary
-                )
             }
         }
     }
@@ -141,7 +126,7 @@ fun CommandLineSearchBarEmptyPreview() {
 fun CommandLineSearchBarFilledPreview() {
     GHClientTheme {
         CommandLineSearchBar(
-            query = "FIND_REPO kotlin",
+            query = "kotlin",
             onQueryChanged = {},
             onSearchClicked = {},
             onClearClicked = {}

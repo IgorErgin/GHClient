@@ -38,6 +38,10 @@ class SearchViewModel @Inject constructor(
     )
     val effect = _effect.receiveAsFlow()
 
+    init {
+        search()
+    }
+
     fun onEvent(event: SearchEvent) {
         when (event) {
             is SearchEvent.QueryChanged -> {
@@ -68,11 +72,7 @@ class SearchViewModel @Inject constructor(
 
     private fun search() {
         val rawQuery = _uiState.value.query.trim()
-        val queryToSearch = if (rawQuery.startsWith("FIND_REPO")) {
-            rawQuery.removePrefix("FIND_REPO").removePrefix("--FILTER=ALL").trim().ifBlank { "kotlin" }
-        } else {
-            rawQuery.ifBlank { "kotlin" }
-        }
+        val queryToSearch = rawQuery.ifBlank { "kotlin" }
 
         val lang = _uiState.value.selectedLanguage
         val finalQuery = if (!lang.isNullOrBlank() && lang != "ВСЕ") {

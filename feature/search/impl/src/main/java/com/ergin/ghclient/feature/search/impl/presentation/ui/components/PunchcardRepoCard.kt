@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -55,10 +53,10 @@ fun PunchcardRepoCard(
         shape = CutCornerShape(0.dp)
     ) {
         Column(
-            modifier = Modifier.padding(14.dp),
+            modifier = Modifier.padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Header: Name & Register Badge
+            // Header: Owner / Name
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -89,28 +87,11 @@ fun PunchcardRepoCard(
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = "[ РЕЕСТР ]",
+                        text = "[ ID: ${repo.id.value} ]",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
-            }
-
-            // Sub-info: System ID
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "SYS_ID // 0x${repo.id.value.toString(16).uppercase()}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-                Text(
-                    text = "АРХИВ: СЕКТОР-01",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
 
             // Description
@@ -125,129 +106,79 @@ fun PunchcardRepoCard(
                 }
             }
 
-            // Segmented LED Telemetry Bar
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "ЗАПОЛНЕНИЕ КАРТЫ ЯДРА",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "98.2%",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp)
-                        .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-                        .padding(1.dp),
-                    horizontalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    for (i in 0..12) {
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxSize()
-                                .then(
-                                    if (i < 10) Modifier.phosphorGlow(glowColor = MaterialTheme.colorScheme.primary, blurRadius = 8f) else Modifier
-                                )
-                                .background(
-                                    if (i < 10) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh
-                                )
-                        )
-                    }
-                }
-            }
-
-            // Badge Metrics Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Owner Avatar + Stars
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .padding(horizontal = 6.dp, vertical = 4.dp)
-                ) {
-                    val isPreview = LocalInspectionMode.current
-                    if (isPreview || repo.ownerAvatarUrl.isBlank()) {
-                        Box(
-                            modifier = Modifier
-                                .size(16.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = repo.ownerName.value.take(1).uppercase(),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                fontSize = 9.sp
-                            )
-                        }
-                    } else {
-                        AsyncImage(
-                            model = repo.ownerAvatarUrl,
-                            contentDescription = repo.ownerName.value,
-                            modifier = Modifier
-                                .size(16.dp)
-                                .clip(CircleShape)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "Звезды",
-                        tint = MaterialTheme.colorScheme.tertiaryContainer,
-                        modifier = Modifier.size(12.dp)
-                    )
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(
-                        text = "${repo.stars}",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.tertiary
-                    )
-                }
-
-                repo.language?.let { lang ->
-                    if (lang.isNotBlank()) {
-                        Box(
-                            modifier = Modifier
-                                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                                .padding(horizontal = 6.dp, vertical = 4.dp)
-                        ) {
-                            Text(
-                                text = "ЯЗЫК: $lang",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Action Footer
+            // Badge Metrics & Action Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "[ СТАТУС: В ПАМЯТИ ]",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Owner Avatar + Stars
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .padding(horizontal = 6.dp, vertical = 4.dp)
+                    ) {
+                        val isPreview = LocalInspectionMode.current
+                        if (isPreview || repo.ownerAvatarUrl.isBlank()) {
+                            Box(
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.primary),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = repo.ownerName.value.take(1).uppercase(),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    fontSize = 9.sp
+                                )
+                            }
+                        } else {
+                            AsyncImage(
+                                model = repo.ownerAvatarUrl,
+                                contentDescription = repo.ownerName.value,
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .clip(CircleShape)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = "Звезды",
+                            tint = MaterialTheme.colorScheme.tertiaryContainer,
+                            modifier = Modifier.size(12.dp)
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Text(
+                            text = "${repo.stars}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+
+                    repo.language?.let { lang ->
+                        if (lang.isNotBlank()) {
+                            Box(
+                                modifier = Modifier
+                                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                                    .padding(horizontal = 6.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "ЯЗЫК: $lang",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+                        }
+                    }
+                }
 
                 Button(
                     onClick = onFavoriteClick,
@@ -283,7 +214,7 @@ fun PunchcardRepoCardPreview() {
             repo = Repo(
                 id = RepoId(1296269L),
                 name = "linux",
-                description = "Исходный код ядра Linux. Драйверы, планировщик задач и оперативная телеметрия.",
+                description = "Исходный код ядра Linux. Драйверы и планировщик задач.",
                 language = "C",
                 stars = 176000,
                 ownerName = OwnerName("torvalds"),
