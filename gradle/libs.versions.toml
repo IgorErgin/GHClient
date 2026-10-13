@@ -72,6 +72,7 @@ androidx-lint-gradle = { group = "androidx.lint", name = "lint-gradle", version.
 
 # --- Core ---
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-browser = { group = "androidx.browser", name = "browser", version = "1.8.0" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 javax-inject = { module = "javax.inject:javax.inject", version = "1" }
