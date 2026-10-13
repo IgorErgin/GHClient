@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
+import com.ergin.ghclient.core.ui.components.CrtNavTransitions
 import com.ergin.ghclient.feature.auth.impl.presentation.ui.AuthRoute
 import com.ergin.ghclient.feature.favorites.impl.presentation.ui.FavoritesRoute
 import com.ergin.ghclient.feature.profile.impl.presentation.ui.ProfileRoute
@@ -25,7 +26,11 @@ fun GHClientNavHost(
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = modifier
+        modifier = modifier,
+        enterTransition = { CrtNavTransitions.enterTransition },
+        exitTransition = { CrtNavTransitions.exitTransition },
+        popEnterTransition = { CrtNavTransitions.popEnterTransition },
+        popExitTransition = { CrtNavTransitions.popExitTransition }
     ) {
         composable<AuthDestination>(
             deepLinks = listOf(
