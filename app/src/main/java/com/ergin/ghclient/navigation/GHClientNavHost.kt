@@ -1,6 +1,5 @@
 package com.ergin.ghclient.navigation
 
-import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -11,6 +10,7 @@ import androidx.navigation.navDeepLink
 import com.ergin.ghclient.core.ui.components.CrtNavTransitions
 import com.ergin.ghclient.feature.auth.impl.presentation.ui.AuthRoute
 import com.ergin.ghclient.feature.favorites.impl.presentation.ui.FavoritesRoute
+import com.ergin.ghclient.feature.issues.impl.presentation.ui.CreateIssueRoute
 import com.ergin.ghclient.feature.profile.impl.presentation.ui.ProfileRoute
 import com.ergin.ghclient.feature.repository.impl.presentation.ui.RepoDetailsRoute
 import com.ergin.ghclient.feature.search.impl.presentation.ui.SearchRoute
@@ -72,11 +72,15 @@ fun GHClientNavHost(
                     navController.popBackStack()
                 },
                 onNavigateToCreateIssue = { owner, repoName ->
-                    Toast.makeText(
-                        context,
-                        "Формирование рапорта: $owner/$repoName",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    navController.navigate(CreateIssueDestination(owner = owner, repoName = repoName))
+                }
+            )
+        }
+
+        composable<CreateIssueDestination> {
+            CreateIssueRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -87,6 +91,9 @@ fun GHClientNavHost(
                     navController.navigate(AuthDestination) {
                         popUpTo<SearchDestination> { inclusive = true }
                     }
+                },
+                onNavigateToDetails = { owner, repoName ->
+                    navController.navigate(RepoDetailsDestination(owner = owner, repoName = repoName))
                 }
             )
         }

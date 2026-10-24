@@ -18,6 +18,12 @@ data class RepoDetailsDestination(
 )
 
 @Serializable
+data class CreateIssueDestination(
+    val owner: String,
+    val repoName: String
+)
+
+@Serializable
 data object FavoritesDestination
 
 @Serializable
