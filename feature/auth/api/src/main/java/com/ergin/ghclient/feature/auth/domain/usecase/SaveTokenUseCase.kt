@@ -10,7 +10,6 @@ class SaveTokenUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     suspend operator fun invoke(token: AccessToken): Result<Unit, DomainError.Local> {
-        if (token.value.isBlank()) return Result.Error(DomainError.Local.IO_EXCEPTION)
         return authRepository.saveToken(token)
     }
 }
