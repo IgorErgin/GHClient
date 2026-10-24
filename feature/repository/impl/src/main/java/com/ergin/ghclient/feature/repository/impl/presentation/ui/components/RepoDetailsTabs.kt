@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.FolderCopy
 import androidx.compose.material.icons.filled.History
@@ -37,7 +38,7 @@ fun RepoDetailsTabs(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceContainerLowest)
             .padding(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         RepoTab.entries.forEach { tab ->
             val isSelected = tab == selectedTab
@@ -45,6 +46,7 @@ fun RepoDetailsTabs(
                 RepoTab.README -> Icons.Default.Description
                 RepoTab.TREE -> Icons.Default.FolderCopy
                 RepoTab.COMMITS -> Icons.Default.History
+                RepoTab.ISSUES -> Icons.Default.BugReport
                 RepoTab.RELEASES -> Icons.Default.Verified
             }
 
@@ -56,12 +58,12 @@ fun RepoDetailsTabs(
                     containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainer,
                     contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                 ),
-                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp)
+                contentPadding = PaddingValues(horizontal = 2.dp, vertical = 6.dp)
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = tab.label,
-                    modifier = Modifier.size(13.dp)
+                    modifier = Modifier.size(12.dp)
                 )
                 Text(
                     text = " ${tab.label}",

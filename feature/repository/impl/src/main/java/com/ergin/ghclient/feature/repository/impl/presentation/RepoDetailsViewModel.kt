@@ -7,6 +7,7 @@ import com.ergin.ghclient.core.domain.DomainError
 import com.ergin.ghclient.core.domain.Result
 import com.ergin.ghclient.core.domain.model.OwnerName
 import com.ergin.ghclient.core.domain.model.RepoName
+import com.ergin.ghclient.feature.issues.domain.usecase.GetIssuesUseCase
 import com.ergin.ghclient.feature.repository.domain.usecase.GetCommitsUseCase
 import com.ergin.ghclient.feature.repository.domain.usecase.GetPullRequestsUseCase
 import com.ergin.ghclient.feature.repository.domain.usecase.GetRepoContentsUseCase
@@ -33,6 +34,7 @@ class RepoDetailsViewModel @Inject constructor(
     private val getRepoReadmeUseCase: GetRepoReadmeUseCase,
     private val getRepoContentsUseCase: GetRepoContentsUseCase,
     private val getCommitsUseCase: GetCommitsUseCase,
+    private val getIssuesUseCase: GetIssuesUseCase,
     private val getPullRequestsUseCase: GetPullRequestsUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -123,6 +125,12 @@ class RepoDetailsViewModel @Inject constructor(
                             _uiState.update { it.copy(commits = commitsResult.data) }
                         }
 
+                        // Load Issues in background
+                        val issuesResult = getIssuesUseCase(owner, repo)
+                        if (issuesResult is Result.Success) {
+                            _uiState.update { it.copy(issues = issuesResult.data) }
+                        }
+
                         // Load Pull Requests / Releases in background
                         val prsResult = getPullRequestsUseCase(owner, repo)
                         if (prsResult is Result.Success) {
@@ -152,7 +160,7 @@ class RepoDetailsViewModel @Inject constructor(
 
     private fun mapErrorToMessage(error: DomainError.Network): String {
         return when (error) {
-            DomainError.Network.NO_INTERNET -> "Отсутствует подключение к интернету"
+            DomainError.Network.NO_INTERNET -> "Отсутствует подключение к сети ГОСТ"
             DomainError.Network.TIMEOUT -> "Превышено время ожидания ответа"
             DomainError.Network.UNAUTHORIZED -> "Ошибка авторизации"
             DomainError.Network.NOT_FOUND -> "Репозиторий не найден"

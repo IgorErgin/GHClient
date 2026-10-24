@@ -40,6 +40,7 @@ import com.ergin.ghclient.feature.repository.impl.presentation.ui.components.Rep
 import com.ergin.ghclient.feature.repository.impl.presentation.ui.components.RepoDetailsTabs
 import com.ergin.ghclient.feature.repository.impl.presentation.ui.components.RepoHardwareStatusStrip
 import com.ergin.ghclient.feature.repository.impl.presentation.ui.components.RepoInspectorHeader
+import com.ergin.ghclient.feature.repository.impl.presentation.ui.components.RepoIssuesCassette
 import com.ergin.ghclient.feature.repository.impl.presentation.ui.components.RepoMetricsGauges
 import com.ergin.ghclient.feature.repository.impl.presentation.ui.components.RepoReleasesCassette
 import com.ergin.ghclient.ui.theme.GHClientTheme
@@ -171,6 +172,9 @@ fun RepoDetailsScreen(
                                     }
                                     RepoTab.COMMITS -> {
                                         RepoCommitsCassette(commits = uiState.commits)
+                                    }
+                                    RepoTab.ISSUES -> {
+                                        RepoIssuesCassette(issues = uiState.issues)
                                     }
                                     RepoTab.RELEASES -> {
                                         RepoReleasesCassette(pullRequests = uiState.pullRequests)
