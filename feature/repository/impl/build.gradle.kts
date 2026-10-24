@@ -26,6 +26,7 @@ android {
 
 dependencies {
     implementation(project(":feature:repository:api"))
+    implementation(project(":feature:issues:api"))
     implementation(project(":core:domain"))
     implementation(project(":core:network"))
     implementation(project(":core:database"))
