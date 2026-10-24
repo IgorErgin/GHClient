@@ -34,6 +34,7 @@ import com.ergin.ghclient.feature.profile.impl.presentation.ui.components.Profil
 import com.ergin.ghclient.feature.profile.impl.presentation.ui.components.ProfileDossierChassis
 import com.ergin.ghclient.feature.profile.impl.presentation.ui.components.ProfileHeader
 import com.ergin.ghclient.feature.profile.impl.presentation.ui.components.ProfileLogoutSection
+import com.ergin.ghclient.feature.profile.impl.presentation.ui.components.ProfileUserReposCassette
 import com.ergin.ghclient.feature.profile.impl.presentation.ui.components.ProfileVitalStrip
 import com.ergin.ghclient.ui.theme.GHClientTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -41,6 +42,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun ProfileRoute(
     onNavigateToAuth: () -> Unit,
+    onNavigateToDetails: (owner: String, repoName: String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
@@ -51,6 +53,7 @@ fun ProfileRoute(
         viewModel.effect.collectLatest { effect ->
             when (effect) {
                 ProfileEffect.NavigateToAuth -> onNavigateToAuth()
+                is ProfileEffect.NavigateToRepoDetails -> onNavigateToDetails(effect.owner, effect.repoName)
                 is ProfileEffect.ShowSnackbar -> snackbarHostState.showSnackbar(effect.message)
             }
         }
@@ -125,6 +128,15 @@ fun ProfileScreen(
                                     reposCount = repos,
                                     followersCount = followers,
                                     followingCount = following
+                                )
+                            }
+
+                            // Real User Repositories
+                            item {
+                                ProfileUserReposCassette(
+                                    userRepos = uiState.userRepos,
+                                    onRepoClick = { onEvent(ProfileEvent.RepoClicked(it)) },
+                                    onFavoriteClick = { onEvent(ProfileEvent.ToggleFavoriteClicked(it)) }
                                 )
                             }
 

@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.ergin.ghclient.core.domain.DomainError
 import com.ergin.ghclient.core.domain.Result
 import com.ergin.ghclient.feature.auth.domain.usecase.ClearTokenUseCase
+import com.ergin.ghclient.feature.favorites.domain.usecase.ToggleFavoriteUseCase
 import com.ergin.ghclient.feature.profile.domain.usecase.GetUserActivityUseCase
 import com.ergin.ghclient.feature.profile.domain.usecase.GetUserProfileUseCase
+import com.ergin.ghclient.feature.profile.domain.usecase.GetUserReposUseCase
 import com.ergin.ghclient.feature.profile.impl.presentation.contract.ProfileEffect
 import com.ergin.ghclient.feature.profile.impl.presentation.contract.ProfileEvent
 import com.ergin.ghclient.feature.profile.impl.presentation.contract.ProfileState
@@ -26,6 +28,8 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val getUserActivityUseCase: GetUserActivityUseCase,
+    private val getUserReposUseCase: GetUserReposUseCase,
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val clearTokenUseCase: ClearTokenUseCase
 ) : ViewModel() {
 
@@ -47,6 +51,26 @@ class ProfileViewModel @Inject constructor(
             ProfileEvent.LoadProfile, ProfileEvent.RetryClicked -> loadProfile()
             ProfileEvent.SafetyUnlockedToggled -> {
                 _uiState.update { it.copy(isSafetyUnlocked = !it.isSafetyUnlocked) }
+            }
+            is ProfileEvent.RepoClicked -> {
+                viewModelScope.launch {
+                    _effect.send(
+                        ProfileEffect.NavigateToRepoDetails(
+                            owner = event.repo.ownerName.value,
+                            repoName = event.repo.name
+                        )
+                    )
+                }
+            }
+            is ProfileEvent.ToggleFavoriteClicked -> {
+                viewModelScope.launch {
+                    try {
+                        toggleFavoriteUseCase(event.repo)
+                        loadProfile()
+                    } catch (e: Exception) {
+                        if (e is CancellationException) throw e
+                    }
+                }
             }
             ProfileEvent.LogoutClicked -> logout()
             ProfileEvent.HealActionClicked -> {
@@ -78,7 +102,13 @@ class ProfileViewModel @Inject constructor(
                             )
                         }
 
-                        // Load Real User Activity / Commits from GitHub API
+                        // Load Real User Repositories
+                        val reposResult = getUserReposUseCase(profile.login)
+                        if (reposResult is Result.Success) {
+                            _uiState.update { it.copy(userRepos = reposResult.data) }
+                        }
+
+                        // Load Real User Activity / Commits
                         val activityResult = getUserActivityUseCase(profile.login)
                         if (activityResult is Result.Success) {
                             _uiState.update { it.copy(activities = activityResult.data) }
