@@ -14,11 +14,10 @@ class UploadFileUseCase @Inject constructor(
         owner: OwnerName,
         repo: RepoName,
         path: String,
-        base64Content: String,
         message: String,
-        branch: String
+        base64Content: String
     ): Result<Unit, DomainError.Network> {
         if (path.isBlank() || base64Content.isBlank()) return Result.Error(DomainError.Network.UNKNOWN)
-        return uploadRepository.uploadFile(owner, repo, path, base64Content, message, branch)
+        return uploadRepository.uploadFile(owner, repo, path, message, base64Content)
     }
 }
