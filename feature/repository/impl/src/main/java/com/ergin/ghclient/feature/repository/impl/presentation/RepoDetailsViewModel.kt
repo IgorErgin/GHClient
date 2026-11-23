@@ -69,6 +69,16 @@ class RepoDetailsViewModel @Inject constructor(
             RepoDetailsEvent.BackClicked -> {
                 viewModelScope.launch { _effect.send(RepoDetailsEffect.NavigateBack) }
             }
+            RepoDetailsEvent.IssueDraftsClicked -> {
+                viewModelScope.launch {
+                    _effect.send(
+                        RepoDetailsEffect.NavigateToIssueDrafts(
+                            owner = _uiState.value.owner,
+                            repoName = _uiState.value.repoName
+                        )
+                    )
+                }
+            }
             RepoDetailsEvent.CreateIssueClicked -> {
                 viewModelScope.launch {
                     _effect.send(

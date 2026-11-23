@@ -38,6 +38,7 @@ sealed interface RepoDetailsEvent : UiEvent {
     data class TabSelected(val tab: RepoTab) : RepoDetailsEvent
     data class BranchSelected(val branch: String) : RepoDetailsEvent
     data object BackClicked : RepoDetailsEvent
+    data object IssueDraftsClicked : RepoDetailsEvent
     data object CreateIssueClicked : RepoDetailsEvent
     data object RetryClicked : RepoDetailsEvent
     data object SyncClicked : RepoDetailsEvent
@@ -45,6 +46,7 @@ sealed interface RepoDetailsEvent : UiEvent {
 
 sealed interface RepoDetailsEffect : UiEffect {
     data object NavigateBack : RepoDetailsEffect
+    data class NavigateToIssueDrafts(val owner: String, val repoName: String) : RepoDetailsEffect
     data class NavigateToCreateIssue(val owner: String, val repoName: String) : RepoDetailsEffect
     data class ShowSnackbar(val message: String) : RepoDetailsEffect
 }

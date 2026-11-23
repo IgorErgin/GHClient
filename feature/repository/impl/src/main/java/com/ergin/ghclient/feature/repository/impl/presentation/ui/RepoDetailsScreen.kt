@@ -42,6 +42,12 @@ import com.ergin.ghclient.feature.repository.impl.presentation.ui.components.Rep
 import com.ergin.ghclient.feature.repository.impl.presentation.ui.components.RepoInspectorHeader
 import com.ergin.ghclient.feature.repository.impl.presentation.ui.components.RepoIssuesCassette
 import com.ergin.ghclient.feature.repository.impl.presentation.ui.components.RepoMetricsGauges
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import com.ergin.ghclient.feature.repository.impl.presentation.ui.components.RepoReleasesCassette
 import com.ergin.ghclient.ui.theme.GHClientTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -50,6 +56,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun RepoDetailsRoute(
     onNavigateBack: () -> Unit,
     onNavigateToCreateIssue: (owner: String, repoName: String) -> Unit,
+    onNavigateToIssueDrafts: (owner: String, repoName: String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RepoDetailsViewModel = hiltViewModel()
 ) {
@@ -61,6 +68,7 @@ fun RepoDetailsRoute(
             when (effect) {
                 RepoDetailsEffect.NavigateBack -> onNavigateBack()
                 is RepoDetailsEffect.NavigateToCreateIssue -> onNavigateToCreateIssue(effect.owner, effect.repoName)
+                is RepoDetailsEffect.NavigateToIssueDrafts -> onNavigateToIssueDrafts(effect.owner, effect.repoName)
                 is RepoDetailsEffect.ShowSnackbar -> snackbarHostState.showSnackbar(effect.message)
             }
         }
@@ -182,11 +190,28 @@ fun RepoDetailsScreen(
                                 }
                             }
 
-                            // Create Issue Action Button
+                            // Create Issue and Drafts Action Buttons
                             item {
-                                CreateIssueActionButton(
-                                    onCreateIssueClick = { onEvent(RepoDetailsEvent.CreateIssueClicked) }
-                                )
+                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Button(
+                                        onClick = { onEvent(RepoDetailsEvent.IssueDraftsClicked) },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = CutCornerShape(0.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                            contentColor = MaterialTheme.colorScheme.primary
+                                        )
+                                    ) {
+                                        Text(
+                                            text = "[ 📑 ЧЕРНОВИКИ РАПОРТОВ ]",
+                                            style = MaterialTheme.typography.titleSmall
+                                        )
+                                    }
+
+                                    CreateIssueActionButton(
+                                        onCreateIssueClick = { onEvent(RepoDetailsEvent.CreateIssueClicked) }
+                                    )
+                                }
                             }
                         }
                     }

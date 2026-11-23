@@ -18,7 +18,20 @@ data class RepoDetailsDestination(
 )
 
 @Serializable
+data class IssueDraftsDestination(
+    val owner: String,
+    val repoName: String
+)
+
+@Serializable
 data class CreateIssueDestination(
+    val owner: String,
+    val repoName: String,
+    val draftUid: String? = null
+)
+
+@Serializable
+data class UploadDestination(
     val owner: String,
     val repoName: String
 )

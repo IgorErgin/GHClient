@@ -11,9 +11,11 @@ import com.ergin.ghclient.core.ui.components.CrtNavTransitions
 import com.ergin.ghclient.feature.auth.impl.presentation.ui.AuthRoute
 import com.ergin.ghclient.feature.favorites.impl.presentation.ui.FavoritesRoute
 import com.ergin.ghclient.feature.issues.impl.presentation.ui.CreateIssueRoute
+import com.ergin.ghclient.feature.issues.impl.presentation.ui.IssueDraftsRoute
 import com.ergin.ghclient.feature.profile.impl.presentation.ui.ProfileRoute
 import com.ergin.ghclient.feature.repository.impl.presentation.ui.RepoDetailsRoute
 import com.ergin.ghclient.feature.search.impl.presentation.ui.SearchRoute
+import com.ergin.ghclient.feature.upload.impl.presentation.ui.UploadRoute
 
 @Composable
 fun GHClientNavHost(
@@ -73,12 +75,40 @@ fun GHClientNavHost(
                 },
                 onNavigateToCreateIssue = { owner, repoName ->
                     navController.navigate(CreateIssueDestination(owner = owner, repoName = repoName))
+                },
+                onNavigateToIssueDrafts = { owner, repoName ->
+                    navController.navigate(IssueDraftsDestination(owner = owner, repoName = repoName))
+                }
+            )
+        }
+
+        composable<IssueDraftsDestination> {
+            IssueDraftsRoute(
+                onNavigateToEditor = { owner, repoName, draftUid ->
+                    navController.navigate(
+                        CreateIssueDestination(
+                            owner = owner,
+                            repoName = repoName,
+                            draftUid = draftUid
+                        )
+                    )
+                },
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }
 
         composable<CreateIssueDestination> {
             CreateIssueRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable<UploadDestination> {
+            UploadRoute(
                 onNavigateBack = {
                     navController.popBackStack()
                 }
