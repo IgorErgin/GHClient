@@ -3,12 +3,15 @@ package com.ergin.ghclient.feature.issues.impl.presentation.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ergin.ghclient.core.ui.components.CathodeMarkdown
+import com.ergin.ghclient.feature.issues.domain.model.DraftPriority
 import com.ergin.ghclient.ui.theme.GHClientTheme
 
 @Composable
@@ -31,6 +35,8 @@ fun CreateIssueForm(
     onTitleInputChanged: (String) -> Unit,
     bodyInput: String,
     onBodyInputChanged: (String) -> Unit,
+    priority: DraftPriority,
+    onPriorityChanged: (DraftPriority) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -60,6 +66,46 @@ fun CreateIssueForm(
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
+            }
+        }
+
+        // Priority Selector Box
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                text = "[ ПРИОРИТЕТ ЧЕРНОВИКА ]",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                DraftPriority.entries.forEach { p ->
+                    val isSelected = p == priority
+                    val (label, containerColor) = when (p) {
+                        DraftPriority.LOW -> "LOW" to MaterialTheme.colorScheme.surfaceContainer
+                        DraftPriority.NORMAL -> "NORMAL" to MaterialTheme.colorScheme.surfaceContainer
+                        DraftPriority.CRITICAL -> "CRITICAL" to MaterialTheme.colorScheme.surfaceContainer
+                    }
+
+                    Button(
+                        onClick = { onPriorityChanged(p) },
+                        modifier = Modifier.weight(1f),
+                        shape = CutCornerShape(0.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isSelected) MaterialTheme.colorScheme.primary else containerColor,
+                            contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+                        ),
+                        contentPadding = PaddingValues(vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                        )
+                    }
+                }
             }
         }
 
@@ -184,7 +230,9 @@ fun CreateIssueFormPreview() {
             titleInput = "Сбой компилятора K2",
             onTitleInputChanged = {},
             bodyInput = "# Проблема в K2\n- Шаг 1\n- Шаг 2",
-            onBodyInputChanged = {}
+            onBodyInputChanged = {},
+            priority = DraftPriority.NORMAL,
+            onPriorityChanged = {}
         )
     }
 }

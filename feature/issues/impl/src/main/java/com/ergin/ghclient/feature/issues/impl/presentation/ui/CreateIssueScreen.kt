@@ -29,6 +29,7 @@ import com.ergin.ghclient.feature.issues.impl.presentation.contract.CreateIssueE
 import com.ergin.ghclient.feature.issues.impl.presentation.contract.CreateIssueState
 import com.ergin.ghclient.feature.issues.impl.presentation.ui.components.CreateIssueForm
 import com.ergin.ghclient.feature.issues.impl.presentation.ui.components.CreateIssueHeader
+import com.ergin.ghclient.feature.issues.impl.presentation.ui.components.SaveDraftActionButton
 import com.ergin.ghclient.feature.issues.impl.presentation.ui.components.SubmitIssueActionButton
 import com.ergin.ghclient.ui.theme.GHClientTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -108,7 +109,16 @@ fun CreateIssueScreen(
                                     titleInput = uiState.titleInput,
                                     onTitleInputChanged = { onEvent(CreateIssueEvent.TitleChanged(it)) },
                                     bodyInput = uiState.bodyInput,
-                                    onBodyInputChanged = { onEvent(CreateIssueEvent.BodyChanged(it)) }
+                                    onBodyInputChanged = { onEvent(CreateIssueEvent.BodyChanged(it)) },
+                                    priority = uiState.priority,
+                                    onPriorityChanged = { onEvent(CreateIssueEvent.PriorityChanged(it)) }
+                                )
+                            }
+
+                            item {
+                                SaveDraftActionButton(
+                                    onSaveDraftClick = { onEvent(CreateIssueEvent.SaveDraftClicked) },
+                                    isSaving = uiState.isSavingDraft
                                 )
                             }
 

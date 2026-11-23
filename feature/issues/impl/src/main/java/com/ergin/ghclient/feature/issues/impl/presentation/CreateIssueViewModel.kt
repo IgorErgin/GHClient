@@ -7,7 +7,10 @@ import com.ergin.ghclient.core.domain.DomainError
 import com.ergin.ghclient.core.domain.Result
 import com.ergin.ghclient.core.domain.model.OwnerName
 import com.ergin.ghclient.core.domain.model.RepoName
+import com.ergin.ghclient.feature.issues.domain.model.IssueDraft
 import com.ergin.ghclient.feature.issues.domain.usecase.CreateIssueUseCase
+import com.ergin.ghclient.feature.issues.domain.usecase.GetIssueDraftUseCase
+import com.ergin.ghclient.feature.issues.domain.usecase.SaveIssueDraftUseCase
 import com.ergin.ghclient.feature.issues.impl.presentation.contract.CreateIssueEffect
 import com.ergin.ghclient.feature.issues.impl.presentation.contract.CreateIssueEvent
 import com.ergin.ghclient.feature.issues.impl.presentation.contract.CreateIssueState
@@ -21,19 +24,28 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.IOException
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateIssueViewModel @Inject constructor(
     private val createIssueUseCase: CreateIssueUseCase,
+    private val getIssueDraftUseCase: GetIssueDraftUseCase,
+    private val saveIssueDraftUseCase: SaveIssueDraftUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val ownerParam: String = savedStateHandle["owner"] ?: "jetbrains"
     private val repoNameParam: String = savedStateHandle["repoName"] ?: "kotlin"
+    private val draftUidParam: String? = savedStateHandle["draftUid"]
 
     private val _uiState = MutableStateFlow(
-        CreateIssueState(owner = ownerParam, repoName = repoNameParam)
+        CreateIssueState(
+            owner = ownerParam,
+            repoName = repoNameParam,
+            draftUid = draftUidParam
+        )
     )
     val uiState: StateFlow<CreateIssueState> = _uiState.asStateFlow()
 
@@ -42,6 +54,30 @@ class CreateIssueViewModel @Inject constructor(
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     val effect = _effect.receiveAsFlow()
+
+    init {
+        if (draftUidParam != null) {
+            loadExistingDraft(draftUidParam)
+        }
+    }
+
+    private fun loadExistingDraft(uid: String) {
+        viewModelScope.launch {
+            val draft = getIssueDraftUseCase(uid)
+            if (draft != null) {
+                _uiState.update {
+                    it.copy(
+                        owner = draft.owner,
+                        repoName = draft.repoName,
+                        titleInput = draft.title,
+                        bodyInput = draft.body,
+                        priority = draft.priority,
+                        draftUid = draft.uid
+                    )
+                }
+            }
+        }
+    }
 
     fun onEvent(event: CreateIssueEvent) {
         when (event) {
@@ -54,9 +90,57 @@ class CreateIssueViewModel @Inject constructor(
             is CreateIssueEvent.BodyChanged -> {
                 _uiState.update { it.copy(bodyInput = event.body) }
             }
+            is CreateIssueEvent.PriorityChanged -> {
+                _uiState.update { it.copy(priority = event.priority) }
+            }
+            CreateIssueEvent.SaveDraftClicked -> saveDraft()
             CreateIssueEvent.SubmitClicked -> submitIssue()
             CreateIssueEvent.BackClicked -> {
                 viewModelScope.launch { _effect.send(CreateIssueEffect.NavigateBack) }
+            }
+        }
+    }
+
+    private fun saveDraft() {
+        val state = _uiState.value
+        val title = state.titleInput.trim()
+        val body = state.bodyInput.trim()
+
+        if (title.isBlank()) {
+            viewModelScope.launch {
+                _effect.send(CreateIssueEffect.ShowSnackbar("Введите заголовок для сохранения черновика"))
+            }
+            return
+        }
+
+        _uiState.update { it.copy(isSavingDraft = true, errorMessage = null) }
+
+        viewModelScope.launch {
+            try {
+                val draft = IssueDraft(
+                    uid = state.draftUid ?: UUID.randomUUID().toString(),
+                    owner = state.owner,
+                    repoName = state.repoName,
+                    title = title,
+                    body = body,
+                    priority = state.priority,
+                    updatedAt = System.currentTimeMillis()
+                )
+
+                saveIssueDraftUseCase(draft)
+
+                _uiState.update { it.copy(isSavingDraft = false) }
+                _effect.send(CreateIssueEffect.ShowSnackbar("Черновик успешно сохранён"))
+                _effect.send(CreateIssueEffect.NavigateBack)
+            } catch (e: Exception) {
+                if (e is CancellationException) throw e
+                _uiState.update { it.copy(isSavingDraft = false) }
+                if (e is IOException) {
+                    _effect.send(CreateIssueEffect.ShowSnackbar("Черновик сохранён в локальном кэше (ошибка сети ГОСТ)"))
+                    _effect.send(CreateIssueEffect.NavigateBack)
+                } else {
+                    _effect.send(CreateIssueEffect.ShowSnackbar("Ошибка сохранения черновика: ${e.localizedMessage}"))
+                }
             }
         }
     }
@@ -66,7 +150,9 @@ class CreateIssueViewModel @Inject constructor(
         val body = _uiState.value.bodyInput.trim()
 
         if (title.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Введите заголовок рапорта (Title)") }
+            viewModelScope.launch {
+                _effect.send(CreateIssueEffect.ShowSnackbar("Введите заголовок рапорта (Title)"))
+            }
             return
         }
 
