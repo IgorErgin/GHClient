@@ -1,0 +1,57 @@
+package com.ergin.ghclient.feature.issues.impl.presentation.ui.components
+
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun IssueDraftsHeader(
+    onBackClick: () -> Unit,
+    onRefreshClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TopAppBar(
+        modifier = modifier.fillMaxWidth(),
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        title = {
+            Text(
+                text = "[ ЧЕРНОВИКИ РАПОРТОВ ]",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Назад",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = onRefreshClick) {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = "Синхронизировать",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    )
+}

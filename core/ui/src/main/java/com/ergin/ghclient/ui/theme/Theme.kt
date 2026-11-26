@@ -1,57 +1,58 @@
 package com.ergin.ghclient.ui.theme
 
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+// Cathode Terminal HUD Dark Color Scheme (DESIGN.md)
+private val CathodeTerminalColorScheme = darkColorScheme(
+    primary = CathodePrimary,
+    onPrimary = CathodeOnPrimary,
+    primaryContainer = CathodePrimaryContainer,
+    onPrimaryContainer = CathodeOnPrimaryContainer,
+    secondary = CathodeSecondary,
+    onSecondary = CathodeOnSecondary,
+    secondaryContainer = CathodeSecondaryContainer,
+    onSecondaryContainer = CathodeOnSecondaryContainer,
+    tertiary = CathodeTertiary,
+    onTertiary = CathodeOnTertiary,
+    tertiaryContainer = CathodeTertiaryContainer,
+    onTertiaryContainer = CathodeOnTertiaryContainer,
+    error = CathodeError,
+    onError = CathodeOnError,
+    errorContainer = CathodeErrorContainer,
+    onErrorContainer = CathodeOnErrorContainer,
+    background = CathodeBackground,
+    onBackground = CathodeOnBackground,
+    surface = CathodeSurface,
+    onSurface = CathodeOnSurface,
+    surfaceVariant = CathodeContainerHighest,
+    onSurfaceVariant = CathodeOnSurfaceVariant,
+    outline = CathodeOutline,
+    outlineVariant = CathodeOutlineVariant
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+// Sharp 0px / Cut Corner Industrial Geometry (DESIGN.md)
+val CathodeShapes = Shapes(
+    extraSmall = CutCornerShape(0.dp),
+    small = CutCornerShape(0.dp),
+    medium = CutCornerShape(0.dp),
+    large = CutCornerShape(0.dp),
+    extraLarge = CutCornerShape(0.dp)
 )
 
 @Composable
 fun GHClientTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    darkTheme: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = CathodeTerminalColorScheme,
         typography = Typography,
+        shapes = CathodeShapes,
         content = content
     )
 }

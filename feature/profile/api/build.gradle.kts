@@ -17,6 +17,7 @@ kotlin {
 
 dependencies {
     implementation(project(":core:domain"))
+    api(project(":feature:search:api"))
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.javax.inject)
 }

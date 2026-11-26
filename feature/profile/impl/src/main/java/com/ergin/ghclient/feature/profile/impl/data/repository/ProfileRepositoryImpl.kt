@@ -10,6 +10,8 @@ import com.ergin.ghclient.feature.profile.domain.repository.ProfileRepository
 import com.ergin.ghclient.feature.profile.impl.data.mapper.toDomain
 import com.ergin.ghclient.feature.profile.impl.data.mapper.toEntity
 import com.ergin.ghclient.feature.profile.impl.data.remote.ProfileApi
+import com.ergin.ghclient.feature.search.domain.model.Repo
+import com.ergin.ghclient.feature.search.impl.data.mapper.toDomain
 import javax.inject.Inject
 
 class ProfileRepositoryImpl @Inject constructor(
@@ -42,6 +44,16 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun getUserActivity(username: String): Result<List<UserActivity>, DomainError.Network> {
         val result = safeApiCall {
             profileApi.getUserActivity(username)
+        }
+        return when (result) {
+            is Result.Success -> Result.Success(result.data.map { it.toDomain() })
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+    override suspend fun getUserRepos(username: String): Result<List<Repo>, DomainError.Network> {
+        val result = safeApiCall {
+            profileApi.getUserRepos(username)
         }
         return when (result) {
             is Result.Success -> Result.Success(result.data.map { it.toDomain() })

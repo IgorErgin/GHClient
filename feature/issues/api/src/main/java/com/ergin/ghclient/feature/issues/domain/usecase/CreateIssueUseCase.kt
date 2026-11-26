@@ -10,8 +10,12 @@ import javax.inject.Inject
 class CreateIssueUseCase @Inject constructor(
     private val issueRepository: IssueRepository
 ) {
-    suspend operator fun invoke(owner: OwnerName, repo: RepoName, title: String, body: String): Result<Unit, DomainError.Network> {
-        if (title.isBlank()) return Result.Error(DomainError.Network.UNKNOWN)
+    suspend operator fun invoke(
+        owner: OwnerName,
+        repo: RepoName,
+        title: String,
+        body: String
+    ): Result<Unit, DomainError.Network> {
         return issueRepository.createIssue(owner, repo, title, body)
     }
 }

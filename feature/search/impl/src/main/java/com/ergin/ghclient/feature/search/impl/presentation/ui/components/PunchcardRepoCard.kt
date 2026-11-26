@@ -1,0 +1,227 @@
+package com.ergin.ghclient.feature.search.impl.presentation.ui.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.ergin.ghclient.core.domain.model.OwnerName
+import com.ergin.ghclient.core.domain.model.RepoId
+import com.ergin.ghclient.core.ui.components.phosphorGlow
+import com.ergin.ghclient.feature.search.domain.model.Repo
+import com.ergin.ghclient.ui.theme.GHClientTheme
+
+@Composable
+fun PunchcardRepoCard(
+    repo: Repo,
+    onClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+        shape = CutCornerShape(0.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Header: Owner / Name
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(6.dp)
+                            .phosphorGlow(glowColor = MaterialTheme.colorScheme.primary, blurRadius = 12f)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "${repo.ownerName.value}/${repo.name}",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = "[ ID: ${repo.id.value} ]",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+            // Description
+            repo.description?.let { desc ->
+                if (desc.isNotBlank()) {
+                    Text(
+                        text = desc,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 2
+                    )
+                }
+            }
+
+            // Badge Metrics & Action Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Owner Avatar + Stars
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .padding(horizontal = 6.dp, vertical = 4.dp)
+                    ) {
+                        val isPreview = LocalInspectionMode.current
+                        if (isPreview || repo.ownerAvatarUrl.isBlank()) {
+                            Box(
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.primary),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = repo.ownerName.value.take(1).uppercase(),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    fontSize = 9.sp
+                                )
+                            }
+                        } else {
+                            AsyncImage(
+                                model = repo.ownerAvatarUrl,
+                                contentDescription = repo.ownerName.value,
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .clip(CircleShape)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = "Звезды",
+                            tint = MaterialTheme.colorScheme.tertiaryContainer,
+                            modifier = Modifier.size(12.dp)
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Text(
+                            text = "${repo.stars}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+
+                    repo.language?.let { lang ->
+                        if (lang.isNotBlank()) {
+                            Box(
+                                modifier = Modifier
+                                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                                    .padding(horizontal = 6.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "ЯЗЫК: $lang",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Button(
+                    onClick = onFavoriteClick,
+                    shape = CutCornerShape(0.dp),
+                    modifier = Modifier.phosphorGlow(glowColor = MaterialTheme.colorScheme.primaryContainer, blurRadius = 14f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = "В ПЗУ",
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "В ПЗУ",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PunchcardRepoCardPreview() {
+    GHClientTheme {
+        PunchcardRepoCard(
+            repo = Repo(
+                id = RepoId(1296269L),
+                name = "linux",
+                description = "Исходный код ядра Linux. Драйверы и планировщик задач.",
+                language = "C",
+                stars = 176000,
+                ownerName = OwnerName("torvalds"),
+                ownerAvatarUrl = ""
+            ),
+            onClick = {},
+            onFavoriteClick = {}
+        )
+    }
+}

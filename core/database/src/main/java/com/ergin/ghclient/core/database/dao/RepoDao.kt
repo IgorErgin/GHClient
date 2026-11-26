@@ -27,4 +27,7 @@ interface RepoDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM repos WHERE id = :repoId AND isFavorite = 1)")
     suspend fun isFavorite(repoId: Long): Boolean
+
+    @Query("DELETE FROM repos WHERE isFavorite = 0")
+    suspend fun clearNonFavoriteRepos()
 }

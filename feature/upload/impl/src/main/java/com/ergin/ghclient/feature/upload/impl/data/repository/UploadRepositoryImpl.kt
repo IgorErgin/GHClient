@@ -7,7 +7,7 @@ import com.ergin.ghclient.core.domain.model.RepoName
 import com.ergin.ghclient.core.network.safeApiCall
 import com.ergin.ghclient.feature.upload.domain.repository.UploadRepository
 import com.ergin.ghclient.feature.upload.impl.data.remote.UploadApi
-import com.ergin.ghclient.feature.upload.impl.data.remote.model.UploadFileRequestDto
+import com.ergin.ghclient.feature.upload.impl.data.remote.model.FileCommitRequestDto
 import javax.inject.Inject
 
 class UploadRepositoryImpl @Inject constructor(
@@ -18,19 +18,17 @@ class UploadRepositoryImpl @Inject constructor(
         owner: OwnerName,
         repo: RepoName,
         path: String,
-        base64Content: String,
         message: String,
-        branch: String
+        base64Content: String
     ): Result<Unit, DomainError.Network> {
         val result = safeApiCall {
             uploadApi.uploadFile(
                 owner = owner.value,
                 repo = repo.value,
                 path = path,
-                request = UploadFileRequestDto(
+                request = FileCommitRequestDto(
                     message = message,
-                    content = base64Content,
-                    branch = branch
+                    content = base64Content
                 )
             )
         }

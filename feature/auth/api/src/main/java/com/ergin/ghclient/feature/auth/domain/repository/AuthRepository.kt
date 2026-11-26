@@ -7,7 +7,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
     val isAuthorized: Flow<Boolean>
-    
+
     suspend fun saveToken(token: AccessToken): Result<Unit, DomainError.Local>
+    suspend fun exchangeCodeForToken(code: String): Result<AccessToken, DomainError.Network>
     suspend fun clearToken(): Result<Unit, DomainError.Local>
 }
