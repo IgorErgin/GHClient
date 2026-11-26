@@ -7,9 +7,11 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.ergin.ghclient.core.database.GHClientDatabase
 import com.ergin.ghclient.core.database.dao.IssueDao
+import com.ergin.ghclient.core.database.dao.IssueDraftDao
 import com.ergin.ghclient.core.database.dao.RepoDao
 import com.ergin.ghclient.core.database.dao.RepoDetailsDao
 import com.ergin.ghclient.core.database.dao.UserProfileDao
+import com.ergin.ghclient.core.database.migration.GHClientMigrations
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,6 +37,10 @@ object DatabaseModule {
             GHClientDatabase::class.java,
             "ghclient.db"
         )
+            .addMigrations(
+                GHClientMigrations.MIGRATION_2_3,
+                GHClientMigrations.MIGRATION_3_4
+            )
             .setQueryCallback({ sqlQuery, bindArgs ->
                 Log.d(DB_LOG_TAG, "SQL Query: $sqlQuery | Args: $bindArgs")
             }, queryExecutor)
@@ -49,7 +55,6 @@ object DatabaseModule {
                     Log.d(DB_LOG_TAG, "GHClientDatabase opened: v${db.version}")
                 }
             })
-            .fallbackToDestructiveMigration(false)
             .build()
     }
 
@@ -76,4 +81,10 @@ object DatabaseModule {
     fun provideIssueDao(
         database: GHClientDatabase
     ): IssueDao = database.issueDao()
+
+    @Provides
+    @Singleton
+    fun provideIssueDraftDao(
+        database: GHClientDatabase
+    ): IssueDraftDao = database.issueDraftDao()
 }
